@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <style>
+    body {
+      background-color: hsl(247,43%,13%);
+      color: #fff;
+      width: 98vw;
+      height: 98vh;
+      display: grid;
+      place-content: center;
+    }
+
+    .wrapper {
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      font-family: monospace;
+    }
+
+    .mona {
+      display: grid;
+      grid-template-columns: repeat(34,14px);
+      grid-template-rows: repeat(43, 14px);
+      grid-gap: 2px;
+    }
+  .mona div {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+  }
+
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <div class="mona">
+
+    </div>
+
+
+  </div>
+
+  <script>
+
+
+    async function mo ()  {
+
+    // const herokuApi = "https://pixel-artist.herokuapp.com/"
+    const herokuApi = "http://localhost:3000/api"
+    const img_pearl_earring =  'https://i.imgur.com/hb0NoQt.png';
+    const img_sunflowers =  'https://i.imgur.com/LX26Z1U.png';
+    const img_mona_lisa =  'https://i.imgur.com/g5pGIIw.png';
+
+    const randImageArray = [img_pearl_earring, img_sunflowers, img_mona_lisa]
+    var randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
+
+    const ax = await axios.get(herokuApi + '?url=' + randImage)
+      .then(function (response) {
+        return response.data;
+      })
+
+    const monadiv = document.querySelector('.mona')
+
+    ax.map(mon => {
+      const d = document.createElement('div')
+      d.style.backgroundColor = mon;
+      monadiv.appendChild(d);
+    })
+  }
+
+mo();
+
+
+  </script>
+</body>
+</html>

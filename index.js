@@ -3,6 +3,7 @@ const rgba = require('rgba-convert');
 const express = require('express')
 const cors = require('cors')
 const app = express()
+const path = require('path');
 app.use(cors())
 const port_number = process.env.PORT || 3000
 
@@ -15,6 +16,7 @@ async function makePixels(imageURL) {
 
     const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
 
+
     console.log({fileOrUrl});
 
     const imageRead = await Jimp.read(fileOrUrl);
@@ -24,10 +26,10 @@ async function makePixels(imageURL) {
 
         // returns the colour of that pixel e.g. 0xFFFFFFFF
         const pixelColor = imageRead.getPixelColor(indexX, indexY);
+        const pixelColorRGBA = Jimp.intToRGBA(pixelColor);
+        const pixelColorRGBCSS = rgba.css(pixelColorRGBA)
 
-        const hex = rgba.hex(pixelColor)
-
-        arr.push(hex);
+        arr.push(pixelColorRGBCSS);
 
       }
     }
@@ -41,13 +43,13 @@ async function makePixels(imageURL) {
 
 }
 
-app.get('/', async (req, res) => {
+app.get('/api', async (req, res) => {
   const { url } =  req.query;
-
   const pixels = await makePixels(url)
-
   res.json(pixels)
-
+})
+app.get('/', async (req, res) => {
+    res.sendFile(path.join(__dirname + '/static/index.html'));
 })
 
 
