@@ -10,34 +10,63 @@
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
 
   <style>
+
+    :root {
+      --pixel-size: 1rem;
+      --pixel-rows: 43;
+      --pixel-cols: 34;
+    }
+
+    html {
+      box-sizing: border-box;
+    }
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
     body {
       background-color: hsl(247,43%,13%);
       color: #fff;
-      width: 98vw;
-      height: 98vh;
+      width: 100%;
+      height: 100vh;
       display: grid;
       place-content: center;
-      padding: 1rem;
+      margin: 0;
+      padding: 0;
     }
 
     .wrapper {
-      padding: 1rem;
+      /* padding: 1rem; */
       display: grid;
       grid-template-columns: 1fr;
       gap: 2rem;
       font-family: monospace;
     }
 
+    /* Art */
+
     .art {
       display: grid;
-      grid-template-columns: repeat(34,14px);
-      grid-template-rows: repeat(43, 14px);
+      grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
+      grid-template-rows: repeat(var(--pixel-rows), var(--pixel-size));
       grid-gap: 2px;
       cursor: pointer;
+      margin: auto;
     }
+
+    @media screen and (max-width: 600px) {
+
+      .art {
+
+        --pixel-size: calc(80vw / var(--pixel-cols));
+        grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
+        grid-template-rows: repeat(var(--pixel-rows), var(--pixel-size));
+      }
+    }
+
     .pixel {
-      width: 1rem;
-      height: 1rem;
+      width: var(--pixel-size);
+      height: var(--pixel-size);
       border-radius: 50%;
       opacity: 0;
     }
@@ -47,11 +76,9 @@
     .image-form {
       width: 100%;
       display: grid;
-      grid-template-columns: 1fr auto auto;
-      grid-template-rows: 1;
+      grid-template-columns: 1fr;
       grid-gap: .5rem;
     }
-
     .image-form__url {
       grid-column: 1;
       grid-row: 1;
@@ -64,15 +91,13 @@
 
     .btn.btn--random,
     .btn.btn--submit {
-      grid-column: 3;
-      grid-row: 1;
       font-size: 1.25rem;
       padding: .75rem 1rem;
       border: none;
       border-radius: .25rem;
       text-transform: uppercase;
       font-weight: bold;
-      grid-column: 3;
+      grid-row: 3;
       background-color: hsl(155, 62%, 40%);
       color: white;
       transition: background-color .2s ease;
@@ -81,13 +106,33 @@
       background-color: hsl(155, 62%, 30%);
     }
     .btn.btn--submit {
-      grid-column: 2;
+      grid-row: 2;
       background-color: hsl(12, 68%, 53%);
     }
     .btn.btn--submit:hover {
-      grid-column: 2;
       background-color: hsl(12, 68%, 43%);
     }
+
+    @media screen and (min-width: 600px) {
+
+      .image-form {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: 1;
+        grid-gap: .5rem;
+      }
+      .btn.btn--submit {
+        grid-column: 2;
+        grid-row: 1;
+      }
+      .btn.btn--random {
+        grid-column: 3;
+        grid-row: 1;
+      }
+
+    }
+
 
 
   </style>
@@ -152,15 +197,12 @@
 
     async function pixelsToArray (imageURL)  {
 
-      // const herokuApi = "https://pixel-artist.herokuapp.com/api"
-      const herokuApi = "http://localhost:3000/api"
-
       const randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
 
       const pixelateImage = imageURL ? imageURL : randImage;
 
       // Call API
-      const fetchPixelArrayFromAPI = await axios.get(herokuApi + '?url=' + pixelateImage)
+      const fetchPixelArrayFromAPI = await axios.get('/api/?url=' + pixelateImage)
         .then(function (response) {
           return response.data;
         })
