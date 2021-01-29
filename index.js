@@ -39,7 +39,7 @@ app.get('/', async (req, res) => {
 
   const pixels = await makePixels(url)
 
-  res.send(pixels)
+  res.json(pixels)
 
 })
 
