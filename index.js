@@ -1,7 +1,9 @@
 const Jimp = require('jimp')
 const rgba = require('rgba-convert');
 const express = require('express')
+const cors = require('cors')
 const app = express()
+app.use(cors())
 const port_number = process.env.PORT || 3000
 
 
