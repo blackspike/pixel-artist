@@ -36,16 +36,44 @@
     }
 
     .wrapper {
-      /* padding: 1rem; */
       display: grid;
       grid-template-columns: 1fr;
       gap: 2rem;
       font-family: monospace;
     }
 
+    /* Spinner
+    ============================= */
+
+    @keyframes spin {
+      0% {transform: rotate(0);}
+      100% {transform: rotate(1turn);}
+    }
+
+    .spinner {
+      pointer-events: none;
+      animation: spin .5s infinite linear;
+      grid-column: 1;
+      grid-row: 1;
+      place-self: center;
+      position: relative;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+
+    .loading .spinner {
+      opacity: 1;
+    }
+
+
     /* Art */
 
     .art {
+      position: relative;
+      z-index: 10;
+      grid-column: 1;
+      grid-row: 1;
       display: grid;
       grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
       grid-template-rows: repeat(var(--pixel-rows), var(--pixel-size));
@@ -139,11 +167,20 @@
 </head>
 <body>
 
+  <!-- Wrapper -->
   <main class="wrapper">
 
+    <!-- Spinner -->
+    <svg class="spinner" width="32" height="32">
+        <circle cx="16" cy="16" r="14" stroke="red" stroke-width="4" fill="none" stroke-dasharray="40,20" stroke-linecap="round"></circle>
+    </svg>
+
+
+    <!-- Art -->
     <div class="art"></div>
 
 
+    <!-- Form -->
     <form class="image-form" id="image_form">
 
       <input class="image-form__url" type="url" name="imageURL" id="image_form_url" placeholder="Enter image URL…" value="https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Old_guitarist_chicago.jpg/1280px-Old_guitarist_chicago.jpg">
@@ -158,6 +195,7 @@
 
   <script>
 
+    const wrapperDiv = document.querySelector('.wrapper')
     const artDiv = document.querySelector('.art')
 
     // Images
@@ -197,6 +235,9 @@
 
     async function pixelsToArray (imageURL)  {
 
+      // Show spinner
+      wrapperDiv.classList.add('loading')
+
       const randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
 
       const pixelateImage = imageURL ? imageURL : randImage;
@@ -204,6 +245,8 @@
       // Call API
       const fetchPixelArrayFromAPI = await axios.get('/api/?url=' + pixelateImage)
         .then(function (response) {
+          console.log('loaded!');
+          wrapperDiv.classList.remove('loading')
           return response.data;
         })
 
