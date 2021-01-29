@@ -25,60 +25,68 @@
       font-family: monospace;
     }
 
-    .mona {
+    .art {
       display: grid;
       grid-template-columns: repeat(34,14px);
       grid-template-rows: repeat(43, 14px);
       grid-gap: 2px;
+      cursor: pointer;
     }
-  .mona div {
-    width: 1rem;
-    height: 1rem;
-    border-radius: 50%;
-  }
+    .pixel {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+    }
 
   </style>
 </head>
 <body>
 
-  <div class="wrapper">
+  <main class="wrapper">
 
-    <div class="mona">
+    <div class="art"></div>
 
-    </div>
-
-
-  </div>
+  </main>
 
   <script>
 
+    const artDiv = document.querySelector('.art')
 
-    async function mo ()  {
+    async function pixelsToArray ()  {
 
-    // const herokuApi = "https://pixel-artist.herokuapp.com/"
-    const herokuApi = "http://localhost:3000/api"
-    const img_pearl_earring =  'https://i.imgur.com/hb0NoQt.png';
-    const img_sunflowers =  'https://i.imgur.com/LX26Z1U.png';
-    const img_mona_lisa =  'https://i.imgur.com/g5pGIIw.png';
+      // const herokuApi = "https://pixel-artist.herokuapp.com/api"
+      const herokuApi = "http://localhost:3000/api"
+      const img_pearl_earring =  'https://i.imgur.com/hb0NoQt.png';
+      const img_sunflowers =  'https://i.imgur.com/LX26Z1U.png';
+      const img_mona_lisa =  'https://i.imgur.com/g5pGIIw.png';
 
-    const randImageArray = [img_pearl_earring, img_sunflowers, img_mona_lisa]
-    var randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
+      const randImageArray = [
+        img_pearl_earring,
+        img_sunflowers,
+        img_mona_lisa
+      ]
 
-    const ax = await axios.get(herokuApi + '?url=' + randImage)
-      .then(function (response) {
-        return response.data;
+      const randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
+
+      const fetchPixelArrayFromAPI = await axios.get(herokuApi + '?url=' + randImage)
+        .then(function (response) {
+          return response.data;
+        })
+
+      fetchPixelArrayFromAPI.map(pixelArrayItem => {
+        const d = document.createElement('div')
+        d.classList.add('pixel');
+        d.style.backgroundColor = pixelArrayItem;
+        artDiv.appendChild(d);
       })
+    }
 
-    const monadiv = document.querySelector('.mona')
+  pixelsToArray();
 
-    ax.map(mon => {
-      const d = document.createElement('div')
-      d.style.backgroundColor = mon;
-      monadiv.appendChild(d);
-    })
-  }
-
-mo();
+  artDiv.addEventListener('click', function() {
+    artDiv.innerHTML = '';
+    pixelsToArray();
+  })
 
 
   </script>
