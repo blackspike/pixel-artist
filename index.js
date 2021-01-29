@@ -14,12 +14,14 @@ async function makePixels(imageURL) {
 
     const arr = []
 
-    const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
+    const fileOrUrl = imageURL ? imageURL : 'american-gothic-LARGE.jpg';
 
 
     console.log({fileOrUrl});
 
     const imageRead = await Jimp.read(fileOrUrl);
+
+    await imageRead.resize(34, 43, Jimp.RESIZE_NEAREST_NEIGHBOR);
 
     for  (let indexY = 0; indexY < 43; indexY++) {
       for  (let indexX = 0; indexX < 34; indexX++) {

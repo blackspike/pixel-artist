@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <link rel="icon" href="../favicon.ico">
+  <title>PixelArt</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
 
   <style>
     body {
@@ -15,6 +17,7 @@
       height: 98vh;
       display: grid;
       place-content: center;
+      padding: 1rem;
     }
 
     .wrapper {
@@ -36,7 +39,56 @@
       width: 1rem;
       height: 1rem;
       border-radius: 50%;
+      opacity: 0;
     }
+
+    /* Form */
+
+    .image-form {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      grid-template-rows: 1;
+      grid-gap: .5rem;
+    }
+
+    .image-form__url {
+      grid-column: 1;
+      grid-row: 1;
+      font-size: 1.25rem;
+      padding: .75rem;
+      font-family: monospace;
+      border: none;
+      border-radius: .25rem;
+    }
+
+    .btn.btn--random,
+    .btn.btn--submit {
+      grid-column: 3;
+      grid-row: 1;
+      font-size: 1.25rem;
+      padding: .75rem 1rem;
+      border: none;
+      border-radius: .25rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      grid-column: 3;
+      background-color: hsl(155, 62%, 40%);
+      color: white;
+      transition: background-color .2s ease;
+    }
+    .btn:hover {
+      background-color: hsl(155, 62%, 30%);
+    }
+    .btn.btn--submit {
+      grid-column: 2;
+      background-color: hsl(12, 68%, 53%);
+    }
+    .btn.btn--submit:hover {
+      grid-column: 2;
+      background-color: hsl(12, 68%, 43%);
+    }
+
 
   </style>
 </head>
@@ -46,47 +98,115 @@
 
     <div class="art"></div>
 
+
+    <form class="image-form" id="image_form">
+
+      <input class="image-form__url" type="url" name="imageURL" id="image_form_url" placeholder="Enter image URL…" value="https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Old_guitarist_chicago.jpg/1280px-Old_guitarist_chicago.jpg">
+
+      <input class="btn btn--submit image-form__submit" type="submit" value="Load">
+
+      <input class="btn btn--random image-form__random" type="button" value="Random" id="image_form_random" >
+
+    </form>
+
   </main>
 
   <script>
 
     const artDiv = document.querySelector('.art')
 
-    async function pixelsToArray ()  {
+    // Images
+    const img_pearl_earring = 'https://i.imgur.com/hb0NoQt.png';
+    const img_sunflowers = 'https://i.imgur.com/LX26Z1U.png';
+    const img_mona_lisa = 'https://i.imgur.com/g5pGIIw.png';
+    const img_riley = 'https://upload.wikimedia.org/wikipedia/en/7/7c/Riley%2C_Shadowplay.jpg';
+    const img_picasso = 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Old_guitarist_chicago.jpg/1280px-Old_guitarist_chicago.jpg';
+
+    const randImageArray = [
+      img_pearl_earring,
+      img_sunflowers,
+      img_mona_lisa,
+      img_riley,
+      img_picasso
+    ]
+
+    // -----------------------------------------------------------------------------
+    // Anime.js Animation
+    // -----------------------------------------------------------------------------
+
+      function animateIn() {
+          anime({
+            targets: '.art div',
+            opacity: [
+              {value: 0, easing: 'easeOutSine', duration: 50},
+              {value: 1, easing: 'easeOutSine', duration: 75}
+            ],
+            delay: anime.stagger(20, {grid: [34, 43], from: 'center'})
+          });
+      }
+
+
+    // -----------------------------------------------------------------------------
+    // Pixels to array func
+    // -----------------------------------------------------------------------------
+
+    async function pixelsToArray (imageURL)  {
 
       // const herokuApi = "https://pixel-artist.herokuapp.com/api"
       const herokuApi = "http://localhost:3000/api"
-      const img_pearl_earring =  'https://i.imgur.com/hb0NoQt.png';
-      const img_sunflowers =  'https://i.imgur.com/LX26Z1U.png';
-      const img_mona_lisa =  'https://i.imgur.com/g5pGIIw.png';
-
-      const randImageArray = [
-        img_pearl_earring,
-        img_sunflowers,
-        img_mona_lisa
-      ]
 
       const randImage = randImageArray[Math.floor(Math.random()*randImageArray.length)];
 
-      const fetchPixelArrayFromAPI = await axios.get(herokuApi + '?url=' + randImage)
+      const pixelateImage = imageURL ? imageURL : randImage;
+
+      // Call API
+      const fetchPixelArrayFromAPI = await axios.get(herokuApi + '?url=' + pixelateImage)
         .then(function (response) {
           return response.data;
         })
 
+      // Loop through and append new pixel divs
       fetchPixelArrayFromAPI.map(pixelArrayItem => {
         const d = document.createElement('div')
         d.classList.add('pixel');
         d.style.backgroundColor = pixelArrayItem;
         artDiv.appendChild(d);
-      })
+      });
+
+      // Fancy!
+      animateIn();
     }
 
   pixelsToArray();
 
-  artDiv.addEventListener('click', function() {
+
+  /* Random on click
+  ============================= */
+
+  artDiv.addEventListener('click', async function() {
     artDiv.innerHTML = '';
-    pixelsToArray();
+    await pixelsToArray();
   })
+
+  /* Form
+  ============================= */
+
+  const imageForm = document.getElementById('image_form');
+  const imageFormURL = document.getElementById('image_form_url');
+  const imageFormRandom = document.getElementById('image_form_random');
+
+  imageForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    artDiv.innerHTML = '';
+    pixelsToArray(imageFormURL.value);
+  })
+
+  imageFormRandom.addEventListener('click', async function() {
+    artDiv.innerHTML = '';
+    await pixelsToArray();
+  })
+
+
 
 
   </script>
