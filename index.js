@@ -9,7 +9,9 @@ async function makePixels(imageURL) {
 
   const arr = []
 
-  const imageRead = await Jimp.read('pearl_earring.png');
+  const imageOrUrl = imageURL ? imageURL : 'pearl_earring.png';
+
+  const imageRead = await Jimp.read(imageOrUrl);
 
   for  (let indexY = 0; indexY < 43; indexY++) {
     for  (let indexX = 0; indexX < 34; indexX++) {
@@ -19,15 +21,10 @@ async function makePixels(imageURL) {
 
       const hex = rgba.hex(pixelColor)
 
-      console.log(hex);
-
-
       arr.push(hex);
 
     }
   }
-
-  console.log(arr);
 
   return arr
 }
