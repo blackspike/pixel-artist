@@ -30,18 +30,28 @@
       width: 100%;
       height: 100vh;
       display: grid;
-      place-content: center;
+      justify-content: center;
       margin: 0;
       padding: 0;
     }
 
     .wrapper {
+      height: 100%;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 2rem;
+      grid-template-rows: 1fr auto;
+      gap: .25rem;
       font-family: monospace;
+      padding: 1rem 0;
     }
 
+    @media screen and (min-width: 600px) {
+
+      .wrapper {
+        gap: 2rem;
+        padding: 2rem 0;
+      }
+    }
     /* Spinner
     ============================= */
 
@@ -76,7 +86,6 @@
       grid-row: 1;
       display: grid;
       grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
-      grid-template-rows: repeat(var(--pixel-rows), var(--pixel-size));
       grid-gap: 2px;
       cursor: pointer;
       margin: auto;
@@ -85,10 +94,8 @@
     @media screen and (max-width: 600px) {
 
       .art {
-
         --pixel-size: calc(80vw / var(--pixel-cols));
         grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
-        grid-template-rows: repeat(var(--pixel-rows), var(--pixel-size));
       }
     }
 
@@ -106,6 +113,8 @@
       display: grid;
       grid-template-columns: 1fr;
       grid-gap: .5rem;
+      grid-column: 1;
+      grid-row: 2;
     }
     .image-form__url {
       grid-column: 1;
@@ -115,12 +124,14 @@
       font-family: monospace;
       border: none;
       border-radius: .25rem;
+      background-color: hsl(247,43%,23%);
+      color: #eee;
     }
 
     .btn.btn--random,
     .btn.btn--submit {
-      font-size: 1.25rem;
-      padding: .75rem 1rem;
+      font-size: .95rem;
+      padding: .75rem;
       border: none;
       border-radius: .25rem;
       text-transform: uppercase;
@@ -150,6 +161,12 @@
         grid-template-rows: 1;
         grid-gap: .5rem;
       }
+      .btn {
+        font-size: 1.25rem;
+        padding: .75rem 1rem;
+
+      }
+
       .btn.btn--submit {
         grid-column: 2;
         grid-row: 1;
@@ -199,18 +216,29 @@
     const artDiv = document.querySelector('.art')
 
     // Images
-    const img_pearl_earring = 'https://i.imgur.com/hb0NoQt.png';
-    const img_sunflowers = 'https://i.imgur.com/LX26Z1U.png';
-    const img_mona_lisa = 'https://i.imgur.com/g5pGIIw.png';
-    const img_riley = 'https://upload.wikimedia.org/wikipedia/en/7/7c/Riley%2C_Shadowplay.jpg';
-    const img_picasso = 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Old_guitarist_chicago.jpg/1280px-Old_guitarist_chicago.jpg';
+    const pearl_earring = 'https://i.imgur.com/hb0NoQt.png';
+    const mona_lisa = 'https://i.imgur.com/g5pGIIw.png';
+    const riley = 'https://upload.wikimedia.org/wikipedia/en/7/7c/Riley%2C_Shadowplay.jpg';
+    const picasso = 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bc/Old_guitarist_chicago.jpg/1280px-Old_guitarist_chicago.jpg';
+    const american_gothic = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/1920px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg';
+    const starry_night = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/2560px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg';
+    const venus = 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Venus_botticelli_detail.jpg';
+    const hokusai = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/2880px-Tsunami_by_hokusai_19th_century.jpg';
+    const magritte = 'https://upload.wikimedia.org/wikipedia/en/e/e5/Magritte_TheSonOfMan.jpg';
+    const magritte_pipe = 'https://upload.wikimedia.org/wikipedia/en/b/b9/MagrittePipe.jpg';
+
 
     const randImageArray = [
-      img_pearl_earring,
-      img_sunflowers,
-      img_mona_lisa,
-      img_riley,
-      img_picasso
+      pearl_earring,
+      mona_lisa,
+      riley,
+      picasso,
+      american_gothic,
+      starry_night,
+      venus,
+      hokusai,
+      magritte,
+      magritte_pipe
     ]
 
     // -----------------------------------------------------------------------------
@@ -235,6 +263,9 @@
 
     async function pixelsToArray (imageURL)  {
 
+      // Clear art
+      artDiv.innerHTML = '';
+
       // Show spinner
       wrapperDiv.classList.add('loading')
 
@@ -245,13 +276,14 @@
       // Call API
       const fetchPixelArrayFromAPI = await axios.get('/api/?url=' + pixelateImage)
         .then(function (response) {
-          console.log('loaded!');
           wrapperDiv.classList.remove('loading')
-          return response.data;
+          const { pixels, imageWidth, imageHeight } = response.data
+
+          return { pixels, imageWidth, imageHeight };
         })
 
       // Loop through and append new pixel divs
-      fetchPixelArrayFromAPI.map(pixelArrayItem => {
+      fetchPixelArrayFromAPI.pixels.map(pixelArrayItem => {
         const d = document.createElement('div')
         d.classList.add('pixel');
         d.style.backgroundColor = pixelArrayItem;
@@ -269,7 +301,6 @@
   ============================= */
 
   artDiv.addEventListener('click', async function() {
-    artDiv.innerHTML = '';
     await pixelsToArray();
   })
 
@@ -282,12 +313,10 @@
 
   imageForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    artDiv.innerHTML = '';
     pixelsToArray(imageFormURL.value);
   })
 
   imageFormRandom.addEventListener('click', async function() {
-    artDiv.innerHTML = '';
     await pixelsToArray();
   })
 

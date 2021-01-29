@@ -12,35 +12,37 @@ async function makePixels(imageURL) {
 
   try {
 
-    const arr = []
+    const pixelsArray = []
 
-    const fileOrUrl = imageURL ? imageURL : 'american-gothic-LARGE.jpg';
-
+    const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
 
     console.log({fileOrUrl});
 
     const imageRead = await Jimp.read(fileOrUrl);
 
-    await imageRead.resize(34, 43, Jimp.RESIZE_NEAREST_NEIGHBOR);
+    const imageResizedInfo = await imageRead.resize(34, Jimp.AUTO, Jimp.RESIZE_NEAREST_NEIGHBOR);
+    const imageWidth = imageResizedInfo.bitmap.width;
+    const imageHeight = imageResizedInfo.bitmap.height;
 
-    for  (let indexY = 0; indexY < 43; indexY++) {
-      for  (let indexX = 0; indexX < 34; indexX++) {
+    for  (let indexY = 0; indexY < imageHeight; indexY++) {
+      for  (let indexX = 0; indexX < imageWidth; indexX++) {
 
         // returns the colour of that pixel e.g. 0xFFFFFFFF
         const pixelColor = imageRead.getPixelColor(indexX, indexY);
         const pixelColorRGBA = Jimp.intToRGBA(pixelColor);
         const pixelColorRGBCSS = rgba.css(pixelColorRGBA)
 
-        arr.push(pixelColorRGBCSS);
+        pixelsArray.push(pixelColorRGBCSS);
 
       }
     }
 
-    return arr
+    return {pixels: pixelsArray, imageWidth, imageHeight }
 
   } catch (error) {
 
     console.error(error)
+    return error
   }
 
 }
@@ -56,7 +58,7 @@ app.get('/', async (req, res) => {
 
 
 app.listen(port_number, () => {
-  console.log(`Example app listening at http://localhost:${port_number}`)
+  console.log(`PixelArtist listening on http://localhost:${port_number}`)
 })
 
 
