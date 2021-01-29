@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "color-convert": "^2.0.1",
     "express": "^4.17.1",
     "jimp": "^0.16.1",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "rgba-convert": "^0.3.0"
   }
 }
