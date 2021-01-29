@@ -170,7 +170,7 @@
     }
     .image-form__url {
       grid-column: 1;
-      grid-row: 1;
+      grid-row: 2;
       font-size: 1.25rem;
       padding: .75rem;
       font-family: monospace;
@@ -188,7 +188,7 @@
       border-radius: .25rem;
       text-transform: uppercase;
       font-weight: bold;
-      grid-row: 3;
+      grid-row: 1;
       background-color: hsl(155, 62%, 40%);
       color: white;
       transition: background-color .2s ease;
@@ -199,8 +199,12 @@
     .btn:active {
       background-color: hsl(247,43%,3%);
     }
+
+    .btn.btn--random {
+      margin-bottom: 1rem;
+    }
     .btn.btn--submit {
-      grid-row: 2;
+      grid-row: 3;
       background-color: hsl(12, 68%, 53%);
     }
     .btn.btn--submit:hover {
@@ -217,6 +221,11 @@
         grid-gap: .5rem;
       }
 
+
+      .image-form__url {
+          grid-row: 1;
+      }
+
       .btn {
         font-size: 1.25rem;
         padding: .75rem 1rem;
@@ -230,6 +239,7 @@
       .btn.btn--random {
         grid-column: 3;
         grid-row: 1;
+        margin-bottom: 0;
       }
 
     }
