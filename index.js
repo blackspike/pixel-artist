@@ -9,29 +9,36 @@ const port_number = process.env.PORT || 3000
 
 async function makePixels(imageURL) {
 
-  const arr = []
+  try {
 
-  const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
+    const arr = []
 
-  console.log({fileOrUrl});
+    const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
 
+    console.log({fileOrUrl});
 
-  const imageRead = await Jimp.read(fileOrUrl);
+    const imageRead = await Jimp.read(fileOrUrl);
 
-  for  (let indexY = 0; indexY < 43; indexY++) {
-    for  (let indexX = 0; indexX < 34; indexX++) {
+    for  (let indexY = 0; indexY < 43; indexY++) {
+      for  (let indexX = 0; indexX < 34; indexX++) {
 
-      // returns the colour of that pixel e.g. 0xFFFFFFFF
-      const pixelColor = imageRead.getPixelColor(indexX, indexY);
+        // returns the colour of that pixel e.g. 0xFFFFFFFF
+        const pixelColor = imageRead.getPixelColor(indexX, indexY);
 
-      const hex = rgba.hex(pixelColor)
+        const hex = rgba.hex(pixelColor)
 
-      arr.push(hex);
+        arr.push(hex);
 
+      }
     }
+
+    return arr
+
+  } catch (error) {
+
+    console.error(error)
   }
 
-  return arr
 }
 
 app.get('/', async (req, res) => {
