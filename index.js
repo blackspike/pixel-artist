@@ -2,16 +2,19 @@ const Jimp = require('jimp')
 const rgba = require('rgba-convert');
 const express = require('express')
 const app = express()
-const port = 3000
+const port_number = process.env.PORT || 3000
 
 
 async function makePixels(imageURL) {
 
   const arr = []
 
-  const imageOrUrl = imageURL ? imageURL : 'pearl_earring.png';
+  const fileOrUrl = imageURL ? imageURL : 'pearl_earring.png';
 
-  const imageRead = await Jimp.read(imageOrUrl);
+  console.log({fileOrUrl});
+
+
+  const imageRead = await Jimp.read(fileOrUrl);
 
   for  (let indexY = 0; indexY < 43; indexY++) {
     for  (let indexX = 0; indexX < 34; indexX++) {
@@ -38,8 +41,9 @@ app.get('/', async (req, res) => {
 
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+
+app.listen(port_number, () => {
+  console.log(`Example app listening at http://localhost:${port_number}`)
 })
 
 
