@@ -24,6 +24,7 @@
 
       --mw: 610px;
 
+      --ff-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
     }
 
@@ -46,7 +47,7 @@
     }
 
     .wrapper {
-      height: 100%;
+      height: 100vh;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: 1fr auto;
@@ -129,13 +130,18 @@
     /* Art
     ============================= */
 
-
-
-    .art {
+    .art-wrapper {
+      overflow: hidden;
       position: relative;
       z-index: 10;
       grid-column: 1;
       grid-row: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .art {
       display: grid;
       grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
       grid-gap: 2px;
@@ -158,7 +164,15 @@
       opacity: 0;
     }
 
-    /* Form */
+    /* Footer
+    ============================= */
+
+    .footer-content {
+      background-color: var(--c-bg);
+    }
+
+    /* Form
+    ============================= */
 
     .image-form {
       width: 100%;
@@ -171,13 +185,28 @@
     .image-form__url {
       grid-column: 1;
       grid-row: 2;
-      font-size: 1.25rem;
+      font-size: 1rem;
       padding: .75rem;
       font-family: monospace;
       border: none;
       border-radius: .25rem;
       background-color: var(--c-input-bg);
       color: var(--c-input-fg);
+    }
+
+    @media screen and (min-width: 600px) {
+
+     .image-form__url {
+       font-size: 1.25rem;
+      }
+    }
+
+
+    .btn {
+      all: unset;
+      box-shadow: 0 3px 2px rgba(0, 0, 0, 0.815);
+      text-align: center;
+      cursor: pointer;
     }
 
     .btn.btn--random,
@@ -317,48 +346,58 @@
     </div>
 
     <!-- Art -->
-    <div class="art"></div>
+    <div class="art-wrapper">
+      <div class="art"></div>
+    </div>
+
+    <!-- Footer -->
+
+    <footer class="footer-content">
 
 
-    <!-- Form -->
-    <form class="image-form" id="image_form">
+        <!-- Form -->
+        <form class="image-form" id="image_form">
 
-      <input class="image-form__url" type="url" name="imageURL" id="image_form_url" placeholder="Enter image URL to convert to css!" value="" required>
+          <input class="image-form__url" type="url" name="imageURL" id="image_form_url" placeholder="Enter image URL to convert to css!" value="" required>
 
-      <input class="btn btn--submit image-form__submit" type="submit" value="Load">
+          <input class="btn btn--submit image-form__submit" type="submit" value="Load">
 
-      <input class="btn btn--random image-form__random" type="button" value="Random" id="image_form_random" >
+          <input class="btn btn--random image-form__random" type="button" value="Random" id="image_form_random" >
 
-    </form>
+        </form>
 
-    <!-- Meta -->
-    <div class="meta">
+        <!-- Meta -->
+        <div class="meta">
 
 
-      <details class="meta-details">
-        <summary class="meta-details__summary">API</summary>
-        <div class="meta-details__content">
+          <details class="meta-details">
+            <summary class="meta-details__summary">API</summary>
+            <div class="meta-details__content">
 
-          <div class="api-field">
-            <label class="api-field__label" for="api-field-get">get</label>
-            <input type="text" name="get" id="api-field-get" class="api-field__input api-fiel__input--get" readonly value="https://pixel-artist.herokuapp.com/api?url=" />
-          </div>
+              <div class="api-field">
+                <label class="api-field__label" for="api-field-get">get</label>
+                <input type="text" name="get" id="api-field-get" class="api-field__input api-fiel__input--get" readonly value="https://pixel-artist.herokuapp.com/api?url=" />
+              </div>
 
-          <div class="api-field">
-            <label class="api-field__label" for="api-field-example">example</label>
-            <input type="text" name="example" id="api-field-example" class="api-field__input api-field__input--example" readonly value="https://pixel-artist.herokuapp.com/api?url=https://placeimg.com/34/43/people" />
-          </div>
+              <div class="api-field">
+                <label class="api-field__label" for="api-field-example">example</label>
+                <input type="text" name="example" id="api-field-example" class="api-field__input api-field__input--example" readonly value="https://pixel-artist.herokuapp.com/api?url=https://placeimg.com/34/43/people" />
+              </div>
 
-          <div class="api-field">
-            <div class="api-field__label" for="api-field-by">by</div>
-            <a href="https://blackspike.com" id="api-field-by" class="api-field__input api-field__input--by">blackspike.com</a>
-          </div>
+              <div class="api-field">
+                <div class="api-field__label" for="api-field-by">by</div>
+                <a href="https://blackspike.com" id="api-field-by" class="api-field__input api-field__input--by">blackspike.com</a>
+              </div>
+
+            </div>
+          </details>
+
 
         </div>
-      </details>
 
 
-    </div>
+
+    </footer>
 
   </main>
 
