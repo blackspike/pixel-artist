@@ -32,7 +32,7 @@ const randomImage = uniqueRandomArray(demoImages);
 // Main makePixels function
 // -----------------------------------------------------------------------------
 
-async function makePixels(imageURL) {
+async function makePixels(imageURL, cols = 32) {
 
   try {
 
@@ -40,11 +40,20 @@ async function makePixels(imageURL) {
     const pixelsArray = []
     const currentRandomImage = randomImage();
     const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/static/art/' + currentRandomImage.file);
-    console.log({fileOrUrl});
+
+    console.log({fileOrUrl, cols});
+
+
+    // Set col min/max
+    if(cols > 64) {
+      cols = 64
+    } else if (cols < 4) {
+      cols = 4
+    }
 
     // Read and resize image
     const imageRead = await Jimp.read(fileOrUrl);
-    const imageResizedInfo = await imageRead.resize(34, Jimp.AUTO, Jimp.RESIZE_NEAREST_NEIGHBOR);
+    const imageResizedInfo = await imageRead.resize(cols, Jimp.AUTO, Jimp.RESIZE_NEAREST_NEIGHBOR);
     const imageWidth = imageResizedInfo.bitmap.width;
     const imageHeight = imageResizedInfo.bitmap.height;
 
@@ -62,7 +71,7 @@ async function makePixels(imageURL) {
       }
     }
 
-    return {pixels: pixelsArray, imageWidth, imageHeight, title: currentRandomImage.title}
+    return {pixels: pixelsArray, meta: {cols: imageWidth, rows: imageHeight, title: currentRandomImage.title}}
 
   } catch (error) {
 
@@ -77,16 +86,18 @@ async function makePixels(imageURL) {
 // -----------------------------------------------------------------------------
 
 app.get('/api', async (req, res) => {
-  const { url } =  req.query;
-  const pixels = await makePixels(url)
+  const { url, cols } =  req.query;
+  const pixels = await makePixels(url, parseInt(cols));
 
   // Catch errors
   if(pixels.error) {
-    res.send({error: pixels.error});
-    return
+
+    return res.status(400).send({
+      message: `There was an issue with the image ${url}`
+    });
   }
 
-  res.json(pixels)
+  res.status(200).json(pixels)
 })
 
 // -----------------------------------------------------------------------------
