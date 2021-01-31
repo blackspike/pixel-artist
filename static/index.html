@@ -463,12 +463,12 @@
       // -----------------------------------------------------------------------------
 
       async function pixelsToArray(imageURL) {
+        // Get columns value from form, set if not
         const cols = imageFormCols.value;
+
         if (!cols) {
           imageFormCols.value = 32;
         }
-
-        console.log(cols);
 
         // Clear art
         artDiv.innerHTML = '';
