@@ -464,14 +464,14 @@
       // -----------------------------------------------------------------------------
 
       async function pixelsToArray(imageURL) {
+
+        // Get cols from field input and set to 32 if not
         const cols = imageFormCols.value;
         if (!cols) {
           imageFormCols.value = 32;
         }
 
-        console.log(cols);
-
-        // Clear art
+        // Clear art/error
         artDiv.innerHTML = '';
         errorDetails.innerText = '';
         errorDiv.classList.remove('error-show');
@@ -479,15 +479,13 @@
         // Show spinner
         wrapperDiv.classList.add('loading');
 
-        // If an image url exists, send it, else just call for a rando image
+        // If an image url exists, send it, else just call for a random image
         const pixelateImageUrl = imageURL ? `/api/?cols=${cols}&url=${imageURL}` : `/api/?cols=${cols}`;
 
         // Call API
         const fetchPixelArrayFromAPI = await axios
           .get(pixelateImageUrl)
           .then(function (response) {
-            // On success remove spinner
-            wrapperDiv.classList.remove('loading');
 
             // Grab vars
             const { pixels, meta } = response.data;
@@ -499,13 +497,21 @@
             // Update cols field in case over min/max
             imageFormCols.value = meta.cols;
 
-            // Loop through and append new pixel divs
-            pixels.map((pixelArrayItem) => {
-              const d = document.createElement('div');
-              d.classList.add('pixel');
-              d.style.backgroundColor = pixelArrayItem;
-              artDiv.appendChild(d);
+            // Loop through nested array rows/cols and append new pixel divs
+            pixels.map((pixelArrayRows) => {
+
+                pixelArrayRows.map((pixelArrayCols) => {
+                const d = document.createElement('div');
+                d.classList.add('pixel');
+                d.style.backgroundColor = pixelArrayCols;
+                artDiv.appendChild(d);
+              });
+
             });
+
+
+            // On success remove spinner
+            wrapperDiv.classList.remove('loading');
 
             // Fancy!
             animateIn(meta.cols);

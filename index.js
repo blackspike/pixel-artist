@@ -6,7 +6,7 @@ const app = express()
 const cors = require('cors')
 const path = require('path');
 app.use(cors())
-const port_number = process.env.PORT || 3000
+const port_number = process.env.PORT || 6451
 
 
 // Images
@@ -36,13 +36,12 @@ async function makePixels(imageURL, cols = 32) {
 
   try {
 
+    const pixelMultiArray = new Array();
     // Set up and create a unique array to avoid showing dupes
-    const pixelsArray = []
     const currentRandomImage = randomImage();
+
+    // If no image url passed, just show one of the demo images
     const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/static/art/' + currentRandomImage.file);
-
-    console.log({fileOrUrl, cols});
-
 
     // Set col min/max
     if(cols > 64) {
@@ -57,29 +56,39 @@ async function makePixels(imageURL, cols = 32) {
     const imageWidth = imageResizedInfo.bitmap.width;
     const imageHeight = imageResizedInfo.bitmap.height;
 
+
     // Loop through the array row at at atime
-    for  (let indexY = 0; indexY < imageHeight; indexY++) {
-      for  (let indexX = 0; indexX < imageWidth; indexX++) {
+    for  (let indexY = 0; indexY < imageHeight ; indexY++) {
 
-        // Get pixel colour and convert to rgb
-        const pixelColor = imageRead.getPixelColor(indexX, indexY);
-        const pixelColorRGBA = Jimp.intToRGBA(pixelColor);
-        const pixelColorRGBCSS = rgba.css(pixelColorRGBA)
+        pixelMultiArray[indexY] = new Array();
 
-        pixelsArray.push(pixelColorRGBCSS);
+        for  (let indexX = 0; indexX < imageWidth; indexX++) {
+
+            // Get pixel colour and convert to rgb
+            const pixelColor = imageRead.getPixelColor(indexX, indexY);
+            const pixelColorRGBA = Jimp.intToRGBA(pixelColor);
+            const pixelColorRGBCSS = rgba.css(pixelColorRGBA)
+
+            if (pixelMultiArray[indexY] == null){
+              pixelMultiArray[indexY] = indexX;
+            } else {
+              pixelMultiArray[indexY].push(pixelColorRGBCSS);
+            }
+
+        }
 
       }
+
+
+      return {pixels: pixelMultiArray, meta: {cols: imageWidth, rows: imageHeight, title: currentRandomImage.title}}
+
+    } catch (error) {
+
+      console.error(error)
+      return {error}
     }
 
-    return {pixels: pixelsArray, meta: {cols: imageWidth, rows: imageHeight, title: currentRandomImage.title}}
-
-  } catch (error) {
-
-    console.error(error)
-    return {error}
   }
-
-}
 
 // -----------------------------------------------------------------------------
 // API
