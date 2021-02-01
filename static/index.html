@@ -467,6 +467,7 @@
 
         // Get cols from field input and set to 32 if not
         const cols = imageFormCols.value;
+
         if (!cols) {
           imageFormCols.value = 32;
         }
@@ -501,11 +502,11 @@
             pixels.map((pixelArrayRows) => {
 
                 pixelArrayRows.map((pixelArrayCols) => {
-                const d = document.createElement('div');
-                d.classList.add('pixel');
-                d.style.backgroundColor = pixelArrayCols;
-                artDiv.appendChild(d);
-              });
+                  const d = document.createElement('div');
+                  d.classList.add('pixel');
+                  d.style.backgroundColor = pixelArrayCols;
+                  artDiv.appendChild(d);
+                });
 
             });
 
