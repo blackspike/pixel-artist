@@ -2,19 +2,23 @@
 
 A toy API to convert any bitmap image in to RBA colours!
 
+## Demo
+
+View a demo at [https://pixel-artist.herokuapp.com](https://pixel-artist.herokuapp.com)
+
+Or try it with a random unsplash image
+
+[https://pixel-artist.herokuapp.com/api/?cols=32&https://source.unsplash.com/random](https://pixel-artist.herokuapp.com/api/?cols=32&url=https://source.unsplash.com/520x640/?portrait)
+
 ## Install & run
 
 ```
-npm install
-```
-
-```
-node index.js
+npm install && node index.js
 ```
 
 ## Usage
 
-Reach the API at
+Reach the hosted API at
 
 ```
 https://pixel-artist.herokuapp.com/api/?cols=x&url=y
@@ -38,7 +42,8 @@ Fewer columns, the faster! Returns a multidimensional array and some meta data:
          "rgb(162, 152, 149)",
          "rgb(150, 158, 173)",
          "rgb(123, 137, 152)"
-      ],...
+      ],
+      ...
    ],
    "meta":{
       "cols":4,
