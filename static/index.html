@@ -221,6 +221,7 @@
         grid-row: 2;
         font-size: 1rem;
         padding: 0.75rem;
+        margin: 0;
         font-family: var(--ff-mono);
         border: none;
         border-radius: 0.25rem;
@@ -295,7 +296,7 @@
           display: block;
           grid-row: 1;
           grid-column: 2;
-          max-width: 4rem;
+          max-width: 5rem;
         }
 
         .btn {
@@ -399,7 +400,7 @@
         <form class="image-form" id="image_form">
           <input class="image-form__url" type="url" name="imageURL" id="image_form_url" inputmode="url" placeholder="Enter image URL" value="" required />
 
-          <input class="image-form__cols" type="number" min="4" max="64" name="cols" id="image_form_cols" value="32" pattern="[0-9]*" inputmode="numeric" />
+          <input class="image-form__cols" type="number" min="4" max="64" maxlength="2" name="cols" id="image_form_cols" value="32" pattern="[0-9]*" inputmode="numeric" />
 
           <input class="btn btn--submit image-form__submit" type="submit" value="Load" />
 
@@ -494,6 +495,9 @@
             // Set grid rows
             root.style.setProperty('--pixel-cols', meta.cols);
             root.style.setProperty('--pixel-rows', meta.rows);
+
+            // Update cols field in case over min/max
+            imageFormCols.value = meta.cols;
 
             // Loop through and append new pixel divs
             pixels.map((pixelArrayItem) => {
