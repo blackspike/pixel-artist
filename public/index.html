@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/crap/favicon.ico" />
+    <title>Pixel Artists by Blackspike.com</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+    <meta name="description" content="A toy API to convert any bitmap image in to RBA colours!">
+
+    <!-- Google / Search Engine Tags -->
+    <meta itemprop="name" content="Pixel Artists by Blackspike.com">
+    <meta itemprop="description" content="A toy API to convert any bitmap image in to RBA colours!">
+    <meta itemprop="image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="http://pixel-artist.herokuapp.com">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pixel Artists by Blackspike.com">
+    <meta property="og:description" content="A toy API to convert any bitmap image in to RBA colours!">
+    <meta property="og:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pixel Artists by Blackspike.com">
+    <meta name="twitter:description" content="A toy API to convert any bitmap image in to RBA colours!">
+    <meta name="twitter:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
+
+
+    <style>
+      :root {
+        --mw: 610px;
+        --pixel-cols: 32;
+        --pixel-rows: 32;
+        --grid-gap: 2px;
+        --pixel-size: calc(calc(var(--mw) / var(--pixel-cols)) - var(--grid-gap));
+
+        --c-bg: hsl(247, 43%, 13%);
+        --c-fg: white;
+
+        --c-input-bg: hsl(247, 43%, 23%);
+        --c-input-fg: #eee;
+
+        --ff-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+      }
+
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      body {
+        background-color: var(--c-bg);
+        color: var(--c-fg);
+        width: 100%;
+        height: 100vh;
+        display: grid;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+      }
+      .visually-hidden {
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        height: 1px;
+        overflow: hidden;
+        position: absolute;
+        white-space: nowrap;
+        width: 1px;
+      }
+
+      .wrapper {
+        height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        gap: 0.25rem;
+        font-family: var(--ff-mono);
+        padding: 1rem 0;
+        max-width: var(--mw);
+        margin: auto;
+      }
+
+      @media screen and (min-width: 600px) {
+        .wrapper {
+          gap: 2rem;
+          padding: 2rem 0;
+        }
+      }
+
+      .main-title {
+      }
+
+      /* Spinner
+    ============================= */
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0);
+        }
+        100% {
+          transform: rotate(1turn);
+        }
+      }
+
+      .spinner {
+        pointer-events: none;
+        animation: spin 0.5s infinite linear;
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: center;
+        align-self: center;
+        position: relative;
+        z-index: 5;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .loading .spinner {
+        opacity: 1;
+      }
+
+      /* Error
+    ============================= */
+
+      .error {
+        pointer-events: none;
+        grid-column: 1;
+        grid-row: 1;
+        position: relative;
+        width: 100%;
+        max-width: var(--mw);
+        display: flex;
+        flex-direction: column;
+        justify-self: center;
+        align-self: center;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem;
+        background-color: hsl(247, 43%, 8%);
+        z-index: 15;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        border-radius: 1rem;
+      }
+      .error.error-show {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      @media screen and (min-width: 600px) {
+        .error {
+          padding: 4rem 2rem;
+        }
+      }
+      .error-details {
+        max-width: var(--mw);
+        margin-top: 1rem;
+      }
+      .error-details__details {
+        opacity: 0.5;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+
+      /* Art
+    ============================= */
+
+      .art-wrapper {
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .art {
+        display: grid;
+        grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
+        grid-gap: var(--grid-gap);
+        cursor: pointer;
+        margin: auto;
+      }
+
+      @media screen and (max-width: 600px) {
+        .art {
+          --pixel-size: calc(80vw / var(--pixel-cols));
+          grid-template-columns: repeat(var(--pixel-cols), var(--pixel-size));
+        }
+      }
+
+      .pixel {
+        width: var(--pixel-size);
+        height: var(--pixel-size);
+        border-radius: 50%;
+        opacity: 0;
+      }
+
+      @media screen and (max-height: 800px) and (min-width: 800px) {
+        .pixel {
+          height: calc(var(--pixel-size) / 2);
+          width: calc(var(--pixel-size) / 2);
+        }
+        .art {
+          grid-template-columns: repeat(var(--pixel-cols), calc(var(--pixel-size) / 2));
+        }
+      }
+
+      /* Footer
+    ============================= */
+
+      .footer-content {
+        grid-row: 2;
+        background-color: var(--c-bg);
+      }
+
+      /* Form
+    ============================= */
+
+      .image-form {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 0.5rem;
+        grid-column: 1;
+        grid-row: 2;
+      }
+      .image-form__cols,
+      .image-form__url {
+        grid-column: 1;
+        grid-row: 2;
+        font-size: 1rem;
+        padding: 0.75rem;
+        margin: 0;
+        font-family: var(--ff-mono);
+        border: none;
+        border-radius: 0.25rem;
+        background-color: var(--c-input-bg);
+        color: var(--c-input-fg);
+      }
+
+      .image-form__cols {
+        display: none;
+      }
+
+      .btn {
+        all: unset;
+        box-shadow: 0 3px 2px rgba(0, 0, 0, 0.815);
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .btn.btn--random,
+      .btn.btn--submit {
+        font-size: 0.95rem;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.25rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        grid-row: 1;
+        background-color: hsl(155, 62%, 40%);
+        color: white;
+        transition: background-color 0.2s ease;
+      }
+      .btn:hover {
+        background-color: hsl(155, 62%, 30%);
+      }
+      .btn:active {
+        background-color: hsl(247, 43%, 3%);
+      }
+
+      .btn.btn--random {
+        margin-bottom: 0.25rem;
+      }
+
+      @media screen and (min-width: 600px) {
+        .btn.btn--random {
+          margin-bottom: 1rem;
+        }
+      }
+
+      .btn.btn--submit {
+        grid-row: 3;
+        background-color: hsl(12, 68%, 53%);
+      }
+      .btn.btn--submit:hover {
+        background-color: hsl(12, 68%, 43%);
+      }
+
+      @media screen and (min-width: 600px) {
+        .image-form {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr auto auto auto;
+          grid-template-rows: 1fr;
+          grid-gap: 0.5rem;
+        }
+
+        .image-form__url {
+          grid-row: 1;
+          grid-column: 1;
+        }
+
+        .image-form__cols {
+          display: block;
+          grid-row: 1;
+          grid-column: 2;
+          max-width: 5rem;
+        }
+
+        .btn {
+          font-size: 1.25rem;
+          padding: 0.75rem 1rem;
+        }
+
+        .btn.btn--submit {
+          grid-column: 3;
+          grid-row: 1;
+        }
+        .btn.btn--random {
+          grid-column: 4;
+          grid-row: 1;
+          margin-bottom: 0;
+        }
+      }
+
+      /* Meta */
+
+      .meta {
+        max-width: var(--mw);
+        font-size: 1rem;
+      }
+
+      .meta-details__summary {
+          margin: 2rem 0 1rem;
+      }
+
+      /* API */
+      .api-field {
+        display: grid;
+        grid-template-columns: auto 1fr;
+      }
+      .api-field + .api-field {
+        margin-top: 0.75rem;
+      }
+
+      .api-field__label {
+        grid-column: 1;
+        background-color: hsl(247, 43%, 9%);
+        display: block;
+        padding: 0.75rem 1rem;
+        font-size: 1em;
+        border-radius: 0.25rem 0 0 0.25rem;
+        text-align: right;
+        color: hsla(0, 0%, 100%, 0.8);
+      }
+
+      .api-field__input {
+        grid-column: 2;
+        background-color: var(--c-input-bg);
+        color: var(--c-input-fg);
+        font-size: 1em;
+        font-family: var(--ff-mono);
+        border: none;
+        padding: 0.75rem 1rem;
+        border-radius: 0 0.25rem 0.25rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Wrapper -->
+    <main class="wrapper">
+      <h1 class="main-title visually-hidden">Image to CSS colours API</h1>
+
+      <!-- Spinner -->
+      <svg class="spinner" width="32" height="32">
+        <circle cx="16" cy="16" r="14" stroke="red" stroke-width="4" fill="none" stroke-dasharray="40,20" stroke-linecap="round"></circle>
+      </svg>
+
+      <!-- Error -->
+      <div class="error">
+        <p class="error__message">Something went wrong ☹️</p>
+        <p class="error__message">Please try another image!</p>
+
+        <details class="error-details">
+          <summary class="error-details__summary">View error details</summary>
+          <div class="error-details__details error-details-message"></div>
+        </details>
+      </div>
+
+      <!-- Art -->
+      <div class="art-wrapper">
+        <div class="art"></div>
+      </div>
+
+      <!-- Footer -->
+
+      <footer class="footer-content">
+        <!-- Form -->
+        <form class="image-form" id="image_form">
+          <input class="image-form__url" type="url" name="imageURL" id="image_form_url" inputmode="url" placeholder="Enter image URL" value="" required />
+
+          <input class="image-form__cols" type="number" min="4" max="64" maxlength="2" name="cols" id="image_form_cols" value="32" pattern="[0-9]*" inputmode="numeric" />
+
+          <input class="btn btn--submit image-form__submit" type="submit" value="Load" />
+
+          <input class="btn btn--random image-form__random" type="button" value="Random" id="image_form_random" />
+        </form>
+
+        <!-- Meta -->
+        <div class="meta">
+          <details class="meta-details">
+            <summary class="meta-details__summary">Image to CSS colours API</summary>
+            <div class="meta-details__content">
+              <div class="api-field">
+                <label class="api-field__label" for="api-field-get">get</label>
+                <input type="text" name="get" id="api-field-get" class="api-field__input api-fiel__input--get" readonly value="https://pixel-artist.herokuapp.com/api/?cols=x&url=y" />
+              </div>
+
+              <div class="api-field">
+                <label class="api-field__label" for="api-field-example">try</label>
+                <input type="text" name="example" id="api-field-example" class="api-field__input api-field__input--example" readonly value="https://pixel-artist.herokuapp.com/api/?cols=32&url=https://source.unsplash.com/520x640/?portrait" />
+              </div>
+
+              <div class="api-field">
+                <div class="api-field__label" for="api-field-by">via</div>
+                <a href="https://blackspike.com" id="api-field-by" class="api-field__input api-field__input--by">blackspike.com</a>
+              </div>
+            </div>
+          </details>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      const root = document.documentElement;
+      const wrapperDiv = document.querySelector('.wrapper');
+      const artDiv = document.querySelector('.art');
+      const errorDiv = document.querySelector('.error');
+      const errorDetails = document.querySelector('.error-details-message');
+
+      const imageForm = document.getElementById('image_form');
+      const imageFormCols = document.getElementById('image_form_cols');
+      const imageFormURL = document.getElementById('image_form_url');
+      const imageFormRandom = document.getElementById('image_form_random');
+
+      // -----------------------------------------------------------------------------
+      // Anime.js Animation
+      // -----------------------------------------------------------------------------
+
+      function animateIn(retrievedCols) {
+        anime({
+          targets: '.art div',
+          opacity: [
+            { value: 0, easing: 'easeOutSine', duration: 50 },
+            { value: 1, easing: 'easeOutSine', duration: 75 },
+          ],
+          delay: anime.stagger(20, { grid: [retrievedCols, retrievedCols], from: 'center' }),
+        });
+      }
+
+      // -----------------------------------------------------------------------------
+      // Pixels to array func
+      // -----------------------------------------------------------------------------
+
+      async function pixelsToArray(imageURL) {
+
+        // Get cols from field input and set to 32 if not
+        const cols = imageFormCols.value;
+
+        if (!cols) {
+          imageFormCols.value = 32;
+        }
+
+        // Clear art/error
+        artDiv.innerHTML = '';
+        errorDetails.innerText = '';
+        errorDiv.classList.remove('error-show');
+
+        // Show spinner
+        wrapperDiv.classList.add('loading');
+
+        // If an image url exists, send it, else just call for a random image
+        const pixelateImageUrl = imageURL ? `/api/?cols=${cols}&url=${imageURL}` : `/api/?cols=${cols}`;
+
+        // Call API
+        const fetchPixelArrayFromAPI = await axios
+          .get(pixelateImageUrl)
+          .then(function (response) {
+
+            // Grab vars
+            const { pixels, meta } = response.data;
+
+            // Set grid rows
+            root.style.setProperty('--pixel-cols', meta.cols);
+            root.style.setProperty('--pixel-rows', meta.rows);
+
+            // Update cols field in case over min/max
+            imageFormCols.value = meta.cols;
+
+            // Loop through nested array rows/cols and append new pixel divs
+            pixels.map((pixelArrayRows) => {
+
+                pixelArrayRows.map((pixelArrayCols) => {
+                  const d = document.createElement('div');
+                  d.classList.add('pixel');
+                  d.style.backgroundColor = pixelArrayCols;
+                  artDiv.appendChild(d);
+                });
+
+            });
+
+
+            // On success remove spinner
+            wrapperDiv.classList.remove('loading');
+
+            // Fancy!
+            animateIn(meta.cols);
+          })
+          .catch((error) => {
+            console.error(error);
+            errorDiv.classList.add('error-show');
+            errorDetails.innerText = error.response.data.message;
+          });
+      }
+
+      // Let's go!
+      pixelsToArray();
+
+      // -----------------------------------------------------------------------------
+      // Random on click
+      // -----------------------------------------------------------------------------
+
+      artDiv.addEventListener('click', async function () {
+        cols = Math.floor(Math.random() * (48 - 22 + 1) + 22);
+        await pixelsToArray();
+      });
+
+      // -----------------------------------------------------------------------------
+      // Form
+      // -----------------------------------------------------------------------------
+
+      // Send image url
+      imageForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        pixelsToArray(imageFormURL.value);
+      });
+
+      // Random button
+      imageFormRandom.addEventListener('click', async function () {
+        cols = Math.floor(Math.random() * (48 - 22 + 1) + 22);
+        await pixelsToArray();
+      });
+    </script>
+  </body>
+</html>

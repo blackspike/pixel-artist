@@ -6,6 +6,7 @@ const app = express()
 const cors = require('cors')
 const path = require('path');
 app.use(cors())
+app.use(express.static(path.join(__dirname, '/public')));
 const port_number = process.env.PORT || 6451
 
 
@@ -41,7 +42,7 @@ async function makePixels(imageURL, cols = 32) {
     const currentRandomImage = randomImage();
 
     // If no image url passed, just show one of the demo images
-    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/static/art/' + currentRandomImage.file);
+    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file);
 
     // Set col min/max
     if(cols > 64) {
@@ -113,9 +114,9 @@ app.get('/api', async (req, res) => {
 // Serve index.html
 // -----------------------------------------------------------------------------
 
-app.get('/', async (req, res) => {
-    res.sendFile(path.join(__dirname + '/static/index.html'));
-})
+  app.get('/', (req, res) => {
+      res.send('Hello World!');
+  });
 
 // -----------------------------------------------------------------------------
 // Listen
