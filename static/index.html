@@ -319,17 +319,11 @@
 
       .meta {
         max-width: var(--mw);
-        font-size: 16px;
+        font-size: 1rem;
       }
 
       .meta-details__summary {
-        margin: 1rem 0 0;
-      }
-
-      @media screen and (min-width: 600px) {
-        .meta-details__summary {
           margin: 2rem 0 1rem;
-        }
       }
 
       /* API */
@@ -343,8 +337,6 @@
 
       .api-field__label {
         grid-column: 1;
-        width: 100%;
-        width: 6rem;
         background-color: hsl(247, 43%, 9%);
         display: block;
         padding: 0.75rem 1rem;
@@ -356,7 +348,6 @@
 
       .api-field__input {
         grid-column: 2;
-        width: 100%;
         background-color: var(--c-input-bg);
         color: var(--c-input-fg);
         font-size: 1em;
@@ -418,12 +409,12 @@
               </div>
 
               <div class="api-field">
-                <label class="api-field__label" for="api-field-example">example</label>
+                <label class="api-field__label" for="api-field-example">try</label>
                 <input type="text" name="example" id="api-field-example" class="api-field__input api-field__input--example" readonly value="https://pixel-artist.herokuapp.com/api/?cols=32&url=https://source.unsplash.com/520x640/?portrait" />
               </div>
 
               <div class="api-field">
-                <div class="api-field__label" for="api-field-by">by</div>
+                <div class="api-field__label" for="api-field-by">via</div>
                 <a href="https://blackspike.com" id="api-field-by" class="api-field__input api-field__input--by">blackspike.com</a>
               </div>
             </div>
