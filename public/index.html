@@ -8,6 +8,7 @@
     <title>pixel-artist by blackspike.com</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 
     <meta name="description" content="A toy API to convert any bitmap image in to RBA colours!">
 
@@ -31,6 +32,11 @@
 
 
     <style>
+      /*
+      // --------------------------
+      //  Vars
+      // --------------------------
+      */
       :root {
         --mw: 610px;
         --pixel-cols: 32;
@@ -46,6 +52,12 @@
 
         --ff-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
       }
+
+      /*
+      // --------------------------
+      //  Defaults
+      // --------------------------
+      */
 
       html {
         box-sizing: border-box;
@@ -76,6 +88,33 @@
         width: 1px;
       }
 
+      .btn {
+        all: unset;
+        box-shadow: 0 3px 2px rgba(0, 0, 0, 0.815);
+        text-align: center;
+        cursor: pointer;
+        font-size: 0.95rem;
+        padding: 0.75rem;
+        border-radius: 0.25rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        background-color: hsl(155, 62%, 40%);
+        color: white;
+        transition: background-color 0.2s ease;
+      }
+      .btn:hover {
+        background-color: hsl(155, 62%, 30%);
+      }
+      .btn:active {
+        background-color: hsl(247, 43%, 3%);
+      }
+
+      /*
+      // --------------------------
+      //  Layout
+      // --------------------------
+      */
+
       .wrapper {
         height: 100vh;
         display: grid;
@@ -98,8 +137,11 @@
       .main-title {
       }
 
-      /* Spinner
-    ============================= */
+      /*
+      // --------------------------
+      //  Spinner
+      // --------------------------
+      */
 
       @keyframes spin {
         0% {
@@ -127,8 +169,49 @@
         opacity: 1;
       }
 
-      /* Error
-    ============================= */
+      /*
+      // --------------------------
+      //  Download
+      // --------------------------
+      */
+
+      .btn.btn--download {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: end;
+        align-self: end;
+        margin: 0 1rem 1rem 0;
+        position: relative;
+        z-index: 15;
+        background-color:hsl(0, 0%, 18%);
+      }
+      .btn.btn--download {
+        background-color:hsl(0, 0%, 18%);
+      }
+      .btn.btn--download:hover {
+        background-color:hsl(0, 0%, 5%);
+      }
+      @media screen and (min-width: 600px) {
+        .btn--download {
+          opacity: 0;
+          pointer-events: none;
+          transition: all .2s ease-out;
+          margin: 0 1rem 1rem 0;
+        }
+         .art-wrapper:hover ~ .btn--download {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+
+      .download-canvas {
+      }
+
+      /*
+      // --------------------------
+      //  Error
+      // --------------------------
+      */
 
       .error {
         pointer-events: none;
@@ -171,8 +254,11 @@
         font-size: 0.75rem;
       }
 
-      /* Art
-    ============================= */
+      /*
+      // --------------------------
+      //  Art
+      // --------------------------
+      */
 
       .art-wrapper {
         overflow: hidden;
@@ -217,16 +303,22 @@
         }
       }
 
-      /* Footer
-    ============================= */
+      /*
+      // --------------------------
+      //  Footer
+      // --------------------------
+      */
 
       .footer-content {
         grid-row: 2;
         background-color: var(--c-bg);
       }
 
-      /* Form
-    ============================= */
+      /*
+      // --------------------------
+      //  Form
+      // --------------------------
+      */
 
       .image-form {
         width: 100%;
@@ -254,31 +346,9 @@
         display: none;
       }
 
-      .btn {
-        all: unset;
-        box-shadow: 0 3px 2px rgba(0, 0, 0, 0.815);
-        text-align: center;
-        cursor: pointer;
-      }
-
       .btn.btn--random,
       .btn.btn--submit {
-        font-size: 0.95rem;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 0.25rem;
-        text-transform: uppercase;
-        font-weight: bold;
         grid-row: 1;
-        background-color: hsl(155, 62%, 40%);
-        color: white;
-        transition: background-color 0.2s ease;
-      }
-      .btn:hover {
-        background-color: hsl(155, 62%, 30%);
-      }
-      .btn:active {
-        background-color: hsl(247, 43%, 3%);
       }
 
       .btn.btn--random {
@@ -319,12 +389,6 @@
           grid-column: 2;
           max-width: 5rem;
         }
-
-        .btn {
-          font-size: 1.25rem;
-          padding: 0.75rem 1rem;
-        }
-
         .btn.btn--submit {
           grid-column: 3;
           grid-row: 1;
@@ -336,7 +400,11 @@
         }
       }
 
-      /* Meta */
+      /*
+      // --------------------------
+      //  Meta
+      // --------------------------
+      */
 
       .meta {
         max-width: var(--mw);
@@ -405,6 +473,9 @@
         <div class="art"></div>
       </div>
 
+      <!-- Download image button -->
+      <button class="btn btn--download" id="download_button">Download</button>
+
       <!-- Footer -->
 
       <footer class="footer-content">
@@ -455,6 +526,9 @@
       const imageFormCols = document.getElementById('image_form_cols');
       const imageFormURL = document.getElementById('image_form_url');
       const imageFormRandom = document.getElementById('image_form_random');
+
+      const downloadButton = document.getElementById('download_button');
+
 
       // -----------------------------------------------------------------------------
       // Anime.js Animation
@@ -538,6 +612,48 @@
 
       // Let's go!
       pixelsToArray();
+
+      // -----------------------------------------------------------------------------
+      // Create and download image
+      // -----------------------------------------------------------------------------
+
+      function saveAs(uri, filename) {
+
+          const link = document.createElement('a');
+
+          if (typeof link.download === 'string') {
+
+              link.href = uri;
+              link.download = filename;
+
+              //Firefox requires the link to be in the body
+              document.body.appendChild(link);
+
+              //simulate click
+              link.click();
+
+              //remove the link when done
+              document.body.removeChild(link);
+
+          } else {
+
+              window.open(uri);
+
+          }
+      }
+
+      downloadButton.addEventListener('click', async function () {
+
+
+        html2canvas(artDiv, {backgroundColor: null,scale: 4}).then(canvas => {
+
+            canvas.classList.add('download-canvas','visually-hiddenx')
+            // document.body.appendChild(canvas)
+            saveAs(canvas.toDataURL(), 'file-name.png');
+        });
+
+
+      });
 
       // -----------------------------------------------------------------------------
       // Random on click
