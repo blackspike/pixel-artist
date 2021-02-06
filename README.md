@@ -1,6 +1,6 @@
 # pixel-artist
 
-A toy API to convert any bitmap image in to RBA colours!
+A toy API to convert any bitmap image in to RGB colours!
 
 ## Demo
 
