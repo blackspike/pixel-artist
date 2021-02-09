@@ -3,10 +3,12 @@
 ### A toy API to convert any bitmap image in to RGB colours!
 
 -----
-[![Node](https://img.shields.io/badge/Javascript-Enabled-lightgreen.svg)](https://shields.io/) 
-<!-- ![](screenshots/2021-02-08-22-44-12.png) -->
-<img src="screenshots/2021-02-08-22-44-12.png" height="700">
+[![Node](https://img.shields.io/badge/Javascript-Enabled-lightgreen.svg)](https://shields.io/) [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/).
+
+<img src="screenshots/cover_animation.gif" height="700">
+
 ## Demo
+<img src="screenshots/2021-02-08-22-44-12.png" height="700">
 
 #### View a demo at [https://pixel-artist.herokuapp.com](https://pixel-artist.herokuapp.com)
 
