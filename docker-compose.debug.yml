@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  pixelartist:
+    image: pixelartist
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 6451:6451
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "index.js"]
