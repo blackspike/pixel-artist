@@ -17,6 +17,10 @@
 ##### [https://pixel-artist.herokuapp.com/api/?cols=32&https://source.unsplash.com/random](https://pixel-artist.herokuapp.com/api/?cols=32&url=https://source.unsplash.com/520x640/?portrait)
 
 ## Install & run
+#### Docker
+```bash
+docker run -it --rm -p 80:6451 wisehackermonkey/pixel-artist:latest 
+```
 #### Node
 ```bash
 npm install
@@ -29,15 +33,19 @@ npm start
 docker-compose up
 ```
 ![](screenshots/2021-02-08-22-50-04.png)
-#### Docker
+#### Docker Build from scratch
 ```bash
 docker build -t pixel-artist .
 docker run -it --rm -p 80:6451 pixel-artist:latest 
 ```
 <img src="screenshots/2021-02-08-22-52-16.png" height="500">
+
 #### Open `localhost:80`
-<img src="screenshots/2021-02-08-22-52-16.png" height="500">
+
+<img src="screenshots/2021-02-08-22-47-58.png" height="500">
+
 ![](screenshots/2021-02-08-22-47-58.png)
+
 ## Usage
 
 Reach the hosted API at
