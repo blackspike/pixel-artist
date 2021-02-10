@@ -5,10 +5,10 @@
 -----
 [![Node](https://img.shields.io/badge/Javascript-Enabled-lightgreen.svg)](https://shields.io/) [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/).
 
-<img src="screenshots/cover_animation.gif" height="700">
+<img src="screenshots/cover_animation.gif" >
 
 ## Demo
-<img src="screenshots/2021-02-08-22-44-12.png" height="700">
+<img src="screenshots/2021-02-08-22-44-12.png">
 
 #### View a demo at [https://pixel-artist.herokuapp.com](https://pixel-artist.herokuapp.com)
 
@@ -26,7 +26,7 @@ docker run -it --rm -p 80:6451 wisehackermonkey/pixel-artist:latest
 npm install
 npm start
 ```
-<img src="screenshots/2021-02-08-22-54-08.png" height="300">
+<img src="screenshots/2021-02-08-22-54-08.png" >
 
 #### Docker-compose 
 ```
@@ -38,11 +38,11 @@ docker-compose up
 docker build -t pixel-artist .
 docker run -it --rm -p 80:6451 pixel-artist:latest 
 ```
-<img src="screenshots/2021-02-08-22-52-16.png" height="500">
+<img src="screenshots/2021-02-08-22-52-16.png">
 
 #### Open `localhost:80`
 
-<img src="screenshots/2021-02-08-22-47-58.png" height="500">
+<img src="screenshots/2021-02-08-22-47-58.png" >
 
 ![](screenshots/2021-02-08-22-47-58.png)
 
