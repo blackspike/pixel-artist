@@ -129,6 +129,7 @@ BTW! It'd be unwise to hotlink to images on the hosted api as heroku has a 30 se
 
 |                                                                                     |                                                                                     |                                                                                     |
 | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [![Demo s1](public/svgs/1.svg)](public/svgs/1.svg)                                  | [![Demo s2](public/svgs/2.svg)](public/svgs/2.svg)                                  | [![Demo s3](public/svgs/3.svg)](public/svgs/3.svg)                                  |
 | [![Demo 1](public/screengrabs/thumbs/demo_1.png)](public/screengrabs/demo_1.png)    | [![Demo 3](public/screengrabs/thumbs/demo_3.png)](public/screengrabs/demo_3.png)    | [![Demo 4](public/screengrabs/thumbs/demo_4.png)](public/screengrabs/demo_4.png)    |
 |                                                                                     |
 | [![Demo 2](public/screengrabs/thumbs/demo_2.png)](public/screengrabs/demo_2.png)    | [![Demo 6](public/screengrabs/thumbs/demo_6.png)](public/screengrabs/demo_6.png)    | [![Demo 7](public/screengrabs/thumbs/demo_7.png)](public/screengrabs/demo_7.png)    |
