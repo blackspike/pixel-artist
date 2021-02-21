@@ -42,7 +42,7 @@ async function makePixels(imageURL, cols = 32) {
     const currentRandomImage = randomImage()
 
     // If no image url passed, just show one of the demo images
-    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
+    const fileOrUrl = '/Users/felix/Dev/colorpixel/public/art/da-vinci-mona-lisa.jpg'
 
     console.log(fileOrUrl);
 
@@ -179,8 +179,6 @@ app.get('/api', async (req, res) => {
 app.get('/svg', async (req, res) => {
   const { url, cols } = req.query
   const pixels = await makePixels(url, parseInt(cols))
-  console.log(pixels);
-
 
   // Catch errors
   if (pixels.error) {
