@@ -121,6 +121,8 @@ hex (if you use hex, you need to encode the hash to `%23` e.g.
 https://pixel-artist.herokuapp.com/svg/?shape=square&background=%23bada55&gap=10&size=40&url=https://source.unsplash.com/520x640/?portrait&cols=22&
 ```
 
+[Try it out!](https://pixel-artist.herokuapp.com/svg/?shape=square&background=%23bada55&gap=10&size=40&url=https://source.unsplash.com/520x640/?portrait&cols=42)
+
 BTW! It'd be unwise to hotlink to images on the hosted api as heroku has a 30 second cold start so it'll be super slow to load!
 
 ## Examples
