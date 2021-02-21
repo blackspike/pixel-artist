@@ -182,9 +182,6 @@ app.get('/svg', async (req, res) => {
   const { url, cols = 32, size = 12, gap = 2, background = undefined, shape = 'circle' } = req.query
   const pixels = await makePixels(url, parseInt(cols))
 
-  console.log({background});
-
-
   // Catch errors
   if (pixels.error) {
 

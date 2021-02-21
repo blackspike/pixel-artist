@@ -10,26 +10,25 @@
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 
-    <meta name="description" content="A toy API to convert any bitmap image in to RBA colours!">
+    <meta name="description" content="A toy API to convert any bitmap image in to RBA colours!" />
 
     <!-- Google / Search Engine Tags -->
-    <meta itemprop="name" content="pixel-artist by blackspike.com">
-    <meta itemprop="description" content="A toy API to convert any bitmap image in to RBA colours!">
-    <meta itemprop="image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
+    <meta itemprop="name" content="pixel-artist by blackspike.com" />
+    <meta itemprop="description" content="A toy API to convert any bitmap image in to RBA colours!" />
+    <meta itemprop="image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png" />
 
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="http://pixel-artist.herokuapp.com">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="pixel-artist by blackspike.com">
-    <meta property="og:description" content="A toy API to convert any bitmap image in to RBA colours!">
-    <meta property="og:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
+    <meta property="og:url" content="http://pixel-artist.herokuapp.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="pixel-artist by blackspike.com" />
+    <meta property="og:description" content="A toy API to convert any bitmap image in to RBA colours!" />
+    <meta property="og:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png" />
 
     <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="pixel-artist by blackspike.com">
-    <meta name="twitter:description" content="A toy API to convert any bitmap image in to RBA colours!">
-    <meta name="twitter:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png">
-
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="pixel-artist by blackspike.com" />
+    <meta name="twitter:description" content="A toy API to convert any bitmap image in to RBA colours!" />
+    <meta name="twitter:image" content="https://pixel-artist.herokuapp.com/crap/meta-1200x628.png" />
 
     <style>
       /*
@@ -183,22 +182,22 @@
         margin: 0 1rem 1rem 0;
         position: relative;
         z-index: 15;
-        background-color:hsl(0, 0%, 18%);
+        background-color: hsl(0, 0%, 18%);
       }
       .btn.btn--download {
-        background-color:hsl(0, 0%, 18%);
+        background-color: hsl(0, 0%, 18%);
       }
       .btn.btn--download:hover {
-        background-color:hsl(0, 0%, 5%);
+        background-color: hsl(0, 0%, 5%);
       }
       @media screen and (min-width: 600px) {
         .btn--download {
           opacity: 0;
           pointer-events: none;
-          transition: all .2s ease-out;
+          transition: all 0.2s ease-out;
           margin: 0 1rem 1rem 0;
         }
-         .art-wrapper:hover ~ .btn--download {
+        .art-wrapper:hover ~ .btn--download {
           opacity: 1;
           pointer-events: all;
         }
@@ -412,7 +411,7 @@
       }
 
       .meta-details__summary {
-          margin: 2rem 0 1rem;
+        margin: 2rem 0 1rem;
       }
 
       /* API */
@@ -507,7 +506,7 @@
 
               <div class="api-field">
                 <div class="api-field__label" for="api-field-by">via</div>
-                <a href="https://blackspike.com" id="api-field-by" class="api-field__input api-field__input--by">blackspike.com</a>
+                <a href="https://github.com/blackspike/pixel-artist" id="api-field-by" class="api-field__input api-field__input--by">https://github.com/blackspike</a>
               </div>
             </div>
           </details>
@@ -529,7 +528,6 @@
 
       const downloadButton = document.getElementById('download_button');
 
-
       // -----------------------------------------------------------------------------
       // Anime.js Animation
       // -----------------------------------------------------------------------------
@@ -550,7 +548,6 @@
       // -----------------------------------------------------------------------------
 
       async function pixelsToArray(imageURL) {
-
         // Get cols from field input and set to 32 if not
         const cols = imageFormCols.value;
 
@@ -573,7 +570,6 @@
         const fetchPixelArrayFromAPI = await axios
           .get(pixelateImageUrl)
           .then(function (response) {
-
             // Grab vars
             const { pixels, meta } = response.data;
 
@@ -586,16 +582,13 @@
 
             // Loop through nested array rows/cols and append new pixel divs
             pixels.map((pixelArrayRows) => {
-
-                pixelArrayRows.map((pixelArrayCols) => {
-                  const d = document.createElement('div');
-                  d.classList.add('pixel');
-                  d.style.backgroundColor = pixelArrayCols;
-                  artDiv.appendChild(d);
-                });
-
+              pixelArrayRows.map((pixelArrayCols) => {
+                const d = document.createElement('div');
+                d.classList.add('pixel');
+                d.style.backgroundColor = pixelArrayCols;
+                artDiv.appendChild(d);
+              });
             });
-
 
             // On success remove spinner
             wrapperDiv.classList.remove('loading');
@@ -618,41 +611,31 @@
       // -----------------------------------------------------------------------------
 
       function saveAs(uri, filename) {
+        const link = document.createElement('a');
 
-          const link = document.createElement('a');
+        if (typeof link.download === 'string') {
+          link.href = uri;
+          link.download = filename;
 
-          if (typeof link.download === 'string') {
+          //Firefox requires the link to be in the body
+          document.body.appendChild(link);
 
-              link.href = uri;
-              link.download = filename;
+          //simulate click
+          link.click();
 
-              //Firefox requires the link to be in the body
-              document.body.appendChild(link);
-
-              //simulate click
-              link.click();
-
-              //remove the link when done
-              document.body.removeChild(link);
-
-          } else {
-
-              window.open(uri);
-
-          }
+          //remove the link when done
+          document.body.removeChild(link);
+        } else {
+          window.open(uri);
+        }
       }
 
       downloadButton.addEventListener('click', async function () {
-
-
-        html2canvas(artDiv, {backgroundColor: null,scale: 4}).then(canvas => {
-
-            canvas.classList.add('download-canvas','visually-hiddenx')
-            // document.body.appendChild(canvas)
-            saveAs(canvas.toDataURL(), 'pixel-artist.png');
+        html2canvas(artDiv, { backgroundColor: null, scale: 4 }).then((canvas) => {
+          canvas.classList.add('download-canvas', 'visually-hiddenx');
+          // document.body.appendChild(canvas)
+          saveAs(canvas.toDataURL(), 'pixel-artist.png');
         });
-
-
       });
 
       // -----------------------------------------------------------------------------
