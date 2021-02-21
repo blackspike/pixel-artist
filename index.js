@@ -33,7 +33,7 @@ const randomImage = uniqueRandomArray(demoImages)
 // Main makePixels function
 // -----------------------------------
 
-async function makePixels(imageURL, cols = 32) {
+async function makePixels(imageURL, cols) {
 
   try {
 
@@ -42,7 +42,7 @@ async function makePixels(imageURL, cols = 32) {
     const currentRandomImage = randomImage()
 
     // If no image url passed, just show one of the demo images
-    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
+    const fileOrUrl = imageURL = undefined ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
 
     console.log(fileOrUrl);
 
@@ -59,7 +59,6 @@ async function makePixels(imageURL, cols = 32) {
     const imageResizedInfo = await imageRead.resize(cols, Jimp.AUTO, Jimp.RESIZE_NEAREST_NEIGHBOR)
     const imageWidth = imageResizedInfo.bitmap.width
     const imageHeight = imageResizedInfo.bitmap.height
-
 
     // Loop through the array row at at atime
     for  (let indexY = 0; indexY < imageHeight ; indexY++) {
@@ -159,7 +158,7 @@ async function makeSVG(pixels, dotSize = 12, gapSize = 2, backgroundColor, dotSh
 // -----------------------------------
 
 app.get('/api', async (req, res) => {
-  const { url, cols } = req.query
+  const { url, cols = 32 } = req.query
   const pixels = await makePixels(url, parseInt(cols))
 
   // Catch errors
@@ -177,7 +176,7 @@ app.get('/api', async (req, res) => {
 // SVG API
 // -----------------------------------
 app.get('/svg', async (req, res) => {
-  const { url, cols } = req.query
+  const { url, cols = 32 } = req.query
   const pixels = await makePixels(url, parseInt(cols))
 
   // Catch errors
