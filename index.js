@@ -33,7 +33,8 @@ const randomImage = uniqueRandomArray(demoImages)
 // Main makePixels function
 // -----------------------------------
 
-async function makePixels(imageURL, cols) {
+async function makePixels(imageURL = undefined, cols = 32) {
+
 
   try {
 
@@ -42,9 +43,9 @@ async function makePixels(imageURL, cols) {
     const currentRandomImage = randomImage()
 
     // If no image url passed, just show one of the demo images
-    const fileOrUrl = imageURL = undefined ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
+    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
 
-    console.log(fileOrUrl);
+    console.log({fileOrUrl});
 
 
     // Set col min/max
@@ -97,34 +98,34 @@ async function makePixels(imageURL, cols) {
 // Make an SVG
 // -----------------------------------
 
-async function makeSVG(pixels, dotSize = 12, gapSize = 2, backgroundColor, dotShape = 'circle') {
+async function makeSVG(pixels, size = 12, gap = 2, background = undefined, shape = 'circle') {
 
   try {
 
-    const sizeIncGap = dotSize + gapSize
+    const sizeIncGap = size + gap
     let svgDots = ''
-    // If a backgroundColor is passed, create a rect with that fill
-    const background = backgroundColor === undefined ? '' : `<rect width="100%" height="100%" fill="${backgroundColor}"/>`
-    const circlePosOffset = dotShape === 'circle' ? dotSize / 2 : 0
+    // If a background is passed, create a rect with that fill
+    const backgroundRect = background === undefined ? '' : `<rect width="100%" height="100%" fill="${background}"/>`
+    const circlePosOffset = shape === 'circle' ? size / 2 : 0
 
     // Loop through nested array rows/cols and append the circles
     await pixels.pixels.map((pixelArrayRows, rowsIndex) => {
 
       pixelArrayRows.map((pixelArrayCols, colsIndex) => {
 
-        if(dotShape === 'circle') {
+        if(shape === 'circle') {
           svgDots += `
         <circle
           cx="${colsIndex * sizeIncGap}"
           cy="${rowsIndex * sizeIncGap}"
-          r="${dotSize / 2}"
+          r="${size / 2}"
           fill="${pixelArrayCols}"
         />`
         } else {
           svgDots += `
         <rect
-          height="${dotSize}"
-          width="${dotSize}"
+          height="${size}"
+          width="${size}"
           x="${colsIndex * sizeIncGap}"
           y="${rowsIndex * sizeIncGap}"
           fill="${pixelArrayCols}"
@@ -136,9 +137,9 @@ async function makeSVG(pixels, dotSize = 12, gapSize = 2, backgroundColor, dotSh
     })
 
     return `<svg xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 ${(pixels.meta.cols * sizeIncGap) - gapSize} ${(pixels.meta.rows * sizeIncGap - gapSize)}">
+    viewBox="0 0 ${(pixels.meta.cols * sizeIncGap) - gap} ${(pixels.meta.rows * sizeIncGap - gap)}">
 
-  ${background}
+  ${backgroundRect}
 
   <g transform="translate(${circlePosOffset},${circlePosOffset})">
     ${svgDots}
@@ -174,10 +175,15 @@ app.get('/api', async (req, res) => {
 
 // -----------------------------------
 // SVG API
+// pixels, size = 12, gap = 2, background = undefined, shape =
 // -----------------------------------
+
 app.get('/svg', async (req, res) => {
-  const { url, cols = 32 } = req.query
+  const { url, cols = 32, size = 12, gap = 2, background = undefined, shape = 'circle' } = req.query
   const pixels = await makePixels(url, parseInt(cols))
+
+  console.log({background});
+
 
   // Catch errors
   if (pixels.error) {
@@ -187,8 +193,12 @@ app.get('/svg', async (req, res) => {
     })
   }
 
+  // Call makessvg with defaults pixels, size = 12, gap = 2, background = undefined, shape = 'circle'
+
+  const svg = await makeSVG(pixels, parseInt(size), parseInt(gap), background, shape)
+
   res.header('Content-Type', 'image/svg+xml')
-  res.send(await makeSVG(pixels,  12, 2, '#ff00ff', 'circle'))
+  res.send(svg)
 
 })
 
