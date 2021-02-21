@@ -42,7 +42,7 @@ async function makePixels(imageURL, cols = 32) {
     const currentRandomImage = randomImage()
 
     // If no image url passed, just show one of the demo images
-    const fileOrUrl = '/Users/felix/Dev/colorpixel/public/art/da-vinci-mona-lisa.jpg'
+    const fileOrUrl = imageURL ? encodeURI(imageURL) : path.join(__dirname + '/public/art/' + currentRandomImage.file)
 
     console.log(fileOrUrl);
 
